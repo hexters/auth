@@ -1,10 +1,11 @@
 <?php
 
+use Mary\Traits\Toast;
 use App\Livewire\Forms\Auth\{{ name }}LoginForm;
 use Illuminate\Support\Facades\Session;
-use function Livewire\Volt\{state, form, title, uses};
-use Mary\Traits\Toast;
+use function Livewire\Volt\{state, form, title, uses, layout};
 
+layout('components.layouts.{{ lowerName }}.guest');
 title('{{ name }} Sign In');
 form({{ name }}LoginForm::class);
 uses([Toast::class]);

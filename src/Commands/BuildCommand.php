@@ -91,7 +91,7 @@ class BuildCommand extends Command
         $route = Str::of(file_get_contents(__DIR__ . '/stubs/route.stub'))->replace(array_keys($replaces), array_values($replaces));
         $routePath = base_path('routes/auth');
         if (!is_dir($routePath)) {
-            mkdir($routePath);
+            File::makeDirectory($routePath);
         }
         file_put_contents("{$routePath}/{$lowerName}.php", $route);
 
@@ -108,12 +108,27 @@ class BuildCommand extends Command
 
         // Middleware
         $guest = Str::of(file_get_contents(__DIR__ . '/stubs/middlewares/guest.stub'))->replace(array_keys($replaces), array_values($replaces));
-        $this->call('make:middleware', [ 'name' => $mid = "{$name}GuestMiddleware" ]);
+        $this->call('make:middleware', ['name' => $mid = "{$name}GuestMiddleware"]);
         file_put_contents(app_path("Http/Middleware/{$mid}.php"), $guest);
 
 
         $auth = Str::of(file_get_contents(__DIR__ . '/stubs/middlewares/auth.stub'))->replace(array_keys($replaces), array_values($replaces));
-        $this->call('make:middleware', [ 'name' => $mid = "{$name}AuthMiddleware" ]);
+        $this->call('make:middleware', ['name' => $mid = "{$name}AuthMiddleware"]);
         file_put_contents(app_path("Http/Middleware/{$mid}.php"), $auth);
+
+        // Layout
+        $authLayout = Str::of(file_get_contents(__DIR__ . '/stubs/blade/layouts/auth.stub'))->replace(array_keys($replaces), array_values($replaces));
+        $dir = resource_path("views/components/layouts/{$lowerName}");
+        if (!is_dir($dir)) {
+            File::makeDirectory($dir);
+        }
+        file_put_contents("{$dir}/auth.blade.php", $authLayout);
+
+        $guestLayout = Str::of(file_get_contents(__DIR__ . '/stubs/blade/layouts/guest.stub'))->replace(array_keys($replaces), array_values($replaces));
+        $dir = resource_path("views/components/layouts/{$lowerName}");
+        if (!is_dir($dir)) {
+            File::makeDirectory($dir);
+        }
+        file_put_contents("{$dir}/guest.blade.php", $guestLayout);
     }
 }
