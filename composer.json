@@ -1,5 +1,18 @@
 {
     "name": "hexters/auth",
+    "description": "Hexters/Auth is a powerful starter kit package for Laravel that simplifies the implementation of basic authentication features and supports the creation of multiple authentication setups. Utilizing Livewire for dynamic interfaces and Volt for a modern admin panel, Hexters/Auth combines simplicity and efficiency with Blade and Tailwind CSS to deliver a seamless authentication experience.",
+    "keywords": [
+        "Laravel authentication",
+        "multiple auth setups",
+        "Laravel Livewire",
+        "Volt admin panel",
+        "Blade templates",
+        "Tailwind CSS",
+        "Laravel starter kit",
+        "authentication package",
+        "Laravel auth package",
+        "dynamic interfaces"
+    ],
     "license": "MIT",
     "autoload": {
         "psr-4": {
