@@ -1,18 +1,19 @@
 # Hexters/Auth
-**hexters/auth** is a starter kit package for Laravel that provides basic authentication features and allows the development of multiple authentication setups with a simple and minimalist implementation using Livewire and Volt, alongside Blade and Tailwind CSS.
+Hexters/Auth is a Laravel package that allows you to create multiple authentication pages, similar to Laravel Breeze. The package is supported by [Livewire Volt](https://livewire.laravel.com) and [TailwindCSS](https://tailwindcss.com). For the components, this package uses [maryUI](https://mary-ui.com).
 
 ## Installation
 
-Install package via composer
-```
+Add the package repository by running the following command:
+```bash
 composer require hexters/auth dev-main
 ```
 
-Setup package
-```
+Install the package by running:
+```bash
 php artisan auth:install
 ```
-create auth page
-```
+
+To create a login page, simply follow this command:
+```bash
 php artisan make:auth
 ```
