@@ -19,7 +19,7 @@ $resendLink = function () {
 };
 
 $logout = function () {
-    Auth::logout();
+    Auth::guard('{{ guard }}')->logout();
 
     Session::invalidate();
     Session::regenerateToken();

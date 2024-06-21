@@ -39,7 +39,7 @@ $signUp = function () {
         $user->notify(new VerifyEmail('{{ as }}verification.verify'));
     }
 
-    Auth::login($user);
+    Auth::guard('{{ guard }}')->login($user);
 
     $this->redirect(route('{{ as }}welcome', absolute: false), navigate: true);
 };
