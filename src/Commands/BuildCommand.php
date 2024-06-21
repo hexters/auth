@@ -62,8 +62,8 @@ class BuildCommand extends Command
             '{{ name }}' => $name,
             '{{ lowerName }}' => $lowerName,
             '{{ prefix }}' => $prefix,
-            '{{ as }}' => "{$as}.",
-            '{{ guard }}' => $guard
+            '{{ as }}' => Route::has('login') ? "{$as}." : '',
+            '{{ guard }}' => $guard,
         ];
 
         // Blade

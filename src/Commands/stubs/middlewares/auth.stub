@@ -19,7 +19,7 @@ class {{ name }}AuthMiddleware
         Auth::shouldUse('{{ guard }}');
 
         if (auth()->guest()) {
-            return to_route('{{ lowerName }}.login');
+            return to_route('{{ as }}login');
         }
 
         return $next($request);

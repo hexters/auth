@@ -20,7 +20,7 @@ class {{ name }}GuestMiddleware
         Auth::shouldUse('{{ guard }}');
 
         if (auth()->check()) {
-            return to_route('{{ lowerName }}.welcome');
+            return to_route('{{ as }}welcome');
         }
 
         return $next($request);
