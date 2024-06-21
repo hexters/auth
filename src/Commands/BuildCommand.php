@@ -87,6 +87,11 @@ class BuildCommand extends Command
         $this->call("make:volt", ['name' => "auth/{$lowerName}/reset-password"]);
         file_put_contents(resource_path("views/livewire/auth/{$lowerName}/reset-password.blade.php"), $resetPassword);
 
+        $verfiyEmail = Str::of(file_get_contents(__DIR__ . '/stubs/blade/verify-email.stub'))->replace(array_keys($replaces), array_values($replaces));
+        $this->call("make:volt", ['name' => "auth/{$lowerName}/verify-email"]);
+        file_put_contents(resource_path("views/livewire/auth/{$lowerName}/verify-email.blade.php"), $verfiyEmail);
+
+
         // Route
         $route = Str::of(file_get_contents(__DIR__ . '/stubs/route.stub'))->replace(array_keys($replaces), array_values($replaces));
         $routePath = base_path('routes/auth');
@@ -116,6 +121,10 @@ class BuildCommand extends Command
         $this->call('make:middleware', ['name' => $mid = "{$name}AuthMiddleware"]);
         file_put_contents(app_path("Http/Middleware/{$mid}.php"), $auth);
 
+        $verified = Str::of(file_get_contents(__DIR__ . '/stubs/middlewares/verified.stub'))->replace(array_keys($replaces), array_values($replaces));
+        $this->call('make:middleware', ['name' => $mid = "{$name}VerifiedMiddleware"]);
+        file_put_contents(app_path("Http/Middleware/{$mid}.php"), $verified);
+
         // Layout
         $authLayout = Str::of(file_get_contents(__DIR__ . '/stubs/blade/layouts/auth.stub'))->replace(array_keys($replaces), array_values($replaces));
         $dir = resource_path("views/components/layouts/{$lowerName}");
@@ -130,5 +139,9 @@ class BuildCommand extends Command
             File::makeDirectory($dir);
         }
         file_put_contents("{$dir}/guest.blade.php", $guestLayout);
+
+        // Controller
+        $verifyController = Str::of(file_get_contents(__DIR__ . '/stubs/controllers/verify.stub'))->replace(array_keys($replaces), array_values($replaces));
+        file_put_contents(app_path("Http/Controllers/{$name}VerifyEmailController.php"), $verifyController);
     }
 }

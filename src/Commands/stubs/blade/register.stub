@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use function Livewire\Volt\{state, form, title, uses, rules, layout};
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Hexters\Auth\Notifications\VerifyEmail;
 
 layout('components.layouts.{{ lowerName }}.guest');
 title('{{ name }} Sign Up');
@@ -31,7 +33,11 @@ $signUp = function () {
 
     $validated['password'] = Hash::make($validated['password']);
     
-    event(new Registered(($user = User::create($validated))));
+    $user = User::create($validated);
+    
+    if($user instanceof MustVerifyEmail) {
+        $user->notify(new VerifyEmail('{{ as }}verification.verify'));
+    }
 
     Auth::login($user);
 
@@ -42,11 +48,11 @@ $signUp = function () {
 
 <div class="min-h-screen flex items-center justify-center">
     <div class="max-w-md lg:mx-auto grow">
-        <div class="bg-base-100 lg:p-10 py-8 px-4 rounded-lg mx-4 flex-none mb-8">
+        <div class="bg-base-100 lg:p-10 py-8 px-4 rounded-lg lg:mx-0 mx-4 flex-none mb-8">
             <h3 class="mb-4 font-bold text-2xl">Sign Up</h3>
             <x-form wire:submit="signUp">
                 <x-input wire:model="name" label="Full Name" icon="o-user-circle" inline />
-                <x-input type="email" wire:model="email" label="E-Mail Address" icon="o-at-symbol" inline />
+                <x-input wire:model="email" type="email" label="E-Mail Address" icon="o-at-symbol" inline />
                 <x-input wire:model="password" type="password" label="Password" icon="o-lock-open" inline />
                 <x-input wire:model="password_confirmation" type="password" label="Confirm Password" icon="o-lock-closed"
                     inline />

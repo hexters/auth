@@ -25,7 +25,7 @@ $signIn = function () {
 
 <div class="min-h-screen flex items-center justify-center">
     <div class="max-w-md lg:mx-auto grow">
-        <div class="bg-base-100 lg:p-10 py-8 px-4 rounded-lg mx-4 flex-none mb-8">
+        <div class="bg-base-100 lg:p-10 py-8 px-4 rounded-lg lg:mx-0 mx-4 flex-none mb-8">
             <h3 class="mb-4 font-bold text-2xl">Sign In</h3>
             <x-form wire:submit="signIn">
                 <x-input wire:model="form.email" label="E-Mail Address" icon="o-at-symbol" inline />
@@ -42,9 +42,12 @@ $signIn = function () {
                     <x-button spinner="signIn" type="submit" class="btn-primary w-full">Sign In</x-button>
                 </div>
     
-                <p class="text-center">
-                    Don't have an account ? <a wire:navigate class="link" href="{{ route('{{ as }}register') }}">Sign Up</a>
-                </p>
+                @if (Route::has('{{ as }}register'))
+                    <p class="text-center">
+                        Don't have an account ? <a wire:navigate class="link" href="{{ route('{{ as }}register') }}">Sign Up</a>
+                    </p>
+                @endif
+                
     
             </x-form>
         </div>

@@ -4,6 +4,8 @@ use Livewire\Volt\Volt;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\{{ name }}AuthMiddleware;
 use App\Http\Middleware\{{ name }}GuestMiddleware;
+use App\Http\Controllers\{{ name }}VerifyEmailController;
+use App\Http\Middleware\{{ name }}VerifiedMiddleware;
 
 Route::middleware([{{ name }}GuestMiddleware::class])
     ->group(function () {
@@ -23,6 +25,21 @@ Route::middleware([{{ name }}GuestMiddleware::class])
 
 Route::middleware([{{ name }}AuthMiddleware::class])
     ->group(function () {
-        Volt::route('{{ lowerName }}', '{{ lowerName }}.welcome')
-            ->name('{{ as }}welcome');
+
+        Route::middleware({{ name }}VerifiedMiddleware::class)->group(function () {
+            
+            Volt::route('{{ lowerName }}', '{{ lowerName }}.welcome')
+                ->name('{{ as }}welcome');
+
+            // Other route here ...
+
+        });
+    
+
+        Volt::route('{{ prefix }}/verify-email', 'auth.{{ lowerName }}.verify-email')
+            ->name('{{ as }}verification.notice');
+
+        Route::get('{{ prefix }}/verify-email/{id}/{hash}', {{ name }}VerifyEmailController::class)
+            ->middleware(['signed', 'throttle:6,1'])
+            ->name('{{ as }}verification.verify');
     });

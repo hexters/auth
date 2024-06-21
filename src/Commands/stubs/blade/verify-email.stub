@@ -1,0 +1,57 @@
+<?php
+
+use Mary\Traits\Toast;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Session;
+use function Livewire\Volt\{state, form, title, uses, rules, layout};
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Hexters\Auth\Notifications\VerifyEmail;
+use Illuminate\Support\Facades\Auth;
+
+layout('components.layouts.{{ lowerName }}.guest');
+title('{{ name }} Verify E-Mail Address');
+uses([Toast::class]);
+
+$resendLink = function () {
+    auth()->user()->notify(new VerifyEmail('{{ as }}verification.verify'));
+
+    $this->success(__('A new verification link has been sent to the email address you provided during registration.'));
+};
+
+$logout = function () {
+    Auth::logout();
+
+    Session::invalidate();
+    Session::regenerateToken();
+
+    $this->redirect('/', navigate: true);
+};
+
+?>
+
+<div class="min-h-screen flex items-center justify-center">
+    <div class="max-w-lg lg:mx-auto grow">
+        <div class="bg-base-100 lg:p-10 py-8 px-4 rounded-lg lg:mx-0 mx-4 flex-none mb-8">
+            <h3 class="mb-4 font-bold text-2xl">Verify E-Mail Address?</h3>
+            <x-form wire:submit="resendLink">
+
+                <p>
+                    Thanks for signing up! Before getting started, could you verify your email address by clicking on
+                    the link we just emailed to you? If you didn't receive the email, we will gladly send you another.
+                </p>
+
+                <div class="divider"></div>
+
+                <div class="flex justify-between">
+                    <x-button spinner="resendLink" type="submit" class="btn-primary">RESEND VERIFICATION EMAIL</x-button>
+                    <x-button wire:click="logout" class="btn-link">Log Out</x-button>
+                </div>
+
+            </x-form>
+        </div>
+
+        <div class="mx-4">
+            <a href="/" wire:navigate class="btn btn-ghost w-full">&larr; Back to Home</a>
+        </div>
+    </div>
+</div>
