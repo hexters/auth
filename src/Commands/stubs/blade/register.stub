@@ -1,0 +1,59 @@
+<?php
+
+use Illuminate\Validation\Rules;
+use function Livewire\Volt\{state, form, title, uses, rules};
+use Mary\Traits\Toast;
+
+title('{{ name }} Sign Up');
+uses([Toast::class]);
+
+state([
+    'name' => '',
+    'email' => '',
+    'password' => '',
+    'password_confirmation' => '',
+]);
+
+rules([
+    'name' => ['required', 'string', 'max:255'],
+    'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+    'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+]);
+
+$signUp = function () {
+    $this->validate();
+
+    $validated['password'] = Hash::make($validated['password']);
+    
+    event(new Registered(($user = User::create($validated))));
+
+    Auth::login($user);
+
+    $this->redirect(route('{{ as }}welcome', absolute: false), navigate: true);
+};
+
+?>
+
+<div class="min-h-screen flex items-center justify-center">
+    <div class="bg-base-100 lg:p-10 py-8 px-4 rounded-lg max-w-md lg:mx-auto mx-4 flex-none grow">
+        <h3 class="mb-4 font-bold text-2xl">Sign Up</h3>
+        <x-form wire:submit="signUp">
+            <x-input wire:model="name" label="Full Name" icon="o-user-circle" inline />
+            <x-input type="email" wire:model="email" label="E-Mail Address" icon="o-at-symbol" inline />
+            <x-input wire:model="password" type="password" label="Password" icon="o-lock-open" inline />
+            <x-input wire:model="password_confirmation" type="password" label="Confirm Password" icon="o-lock-closed"
+                inline />
+
+            <div class="divider"></div>
+
+            <div>
+                <x-button spinner="signUp" type="submit" class="btn-primary w-full">Sign In</x-button>
+            </div>
+
+            <p class="text-center">
+                Already have an account ? <a wire:navigate class="link" href="{{ route('{{ as }}login') }}">Sign In</a>
+            </p>
+
+        </x-form>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+<?php
+
+use Livewire\Volt\Volt;
+use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\{{ name }}AuthMiddleware;
+use App\Http\Middleware\{{ name }}GuestMiddleware;
+
+Route::middleware([{{ name }}GuestMiddleware::class])
+    ->group(function () {
+
+        Volt::route('{{ prefix }}/login', 'auth.{{ lowerName }}.login')
+            ->name('{{ as }}login');
+
+        Volt::route('{{ prefix }}/register', 'auth.{{ lowerName }}.register')
+            ->name('{{ as }}register');
+
+        Volt::route('{{ prefix }}/forgot-password', 'auth.{{ lowerName }}.forgot-password')
+            ->name('{{ as }}password.request');
+
+        Volt::route('{{ prefix }}/reset-password/{token}', 'auth.{{ lowerName }}.reset-password')
+            ->name('{{ as }}password.reset');
+    });
+
+Route::middleware([{{ name }}AuthMiddleware::class])
+    ->group(function () {
+        Volt::route('{{ lowerName }}', '{{ lowerName }}.welcome')
+            ->name('{{ as }}welcome');
+    });

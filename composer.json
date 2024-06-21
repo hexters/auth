@@ -1,0 +1,28 @@
+{
+    "name": "hexters/auth",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Hexters\\Auth\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Hexters\\Auth\\AuthServiceProvider",
+                "Hexters\\Auth\\RouteServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "Asep",
+            "email": "hexters@gmail.com"
+        }
+    ],
+    "require": {
+        "livewire/livewire": "^3.5",
+        "livewire/volt": "^1.6",
+        "robsontenorio/mary": "^1.33"
+    }
+}

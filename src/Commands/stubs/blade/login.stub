@@ -1,0 +1,49 @@
+<?php
+
+use App\Livewire\Forms\Auth\{{ name }}LoginForm;
+use Illuminate\Support\Facades\Session;
+use function Livewire\Volt\{state, form, title, uses};
+use Mary\Traits\Toast;
+
+title('{{ name }} Sign In');
+form({{ name }}LoginForm::class);
+uses([Toast::class]);
+
+$signIn = function () {
+    $this->validate();
+
+    $this->form->authenticate();
+
+    Session::regenerate();
+
+    $this->redirectIntended(default: route('{{ as }}welcome', absolute: false), navigate: true);
+    
+};
+
+?>
+
+<div class="min-h-screen flex items-center justify-center">
+    <div class="bg-base-100 lg:p-10 py-8 px-4 rounded-lg max-w-md lg:mx-auto mx-4 flex-none grow">
+        <h3 class="mb-4 font-bold text-2xl">Sign In</h3>
+        <x-form wire:submit="signIn">
+            <x-input wire:model="form.email" label="E-Mail Address" icon="o-at-symbol" inline />
+            <x-input wire:model="form.password" type="password" label="Password" icon="o-lock-closed" inline />
+
+            <div class="flex justify-between items-center">
+                <x-checkbox label="Remember Me" wire:model="form.remember" />
+                <a wire:navigate href="{{ route('{{ as }}password.request') }}" class="link">Forgot your password ?</a>
+            </div>
+
+            <div class="divider"></div>
+
+            <div>
+                <x-button spinner="signIn" type="submit" class="btn-primary w-full">Sign In</x-button>
+            </div>
+
+            <p class="text-center">
+                Don't have an account ? <a wire:navigate class="link" href="{{ route('{{ as }}register') }}">Sign Up</a>
+            </p>
+
+        </x-form>
+    </div>
+</div>
