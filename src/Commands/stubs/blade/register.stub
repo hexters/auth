@@ -1,6 +1,7 @@
 <?php
 
 use Mary\Traits\Toast;
+use Hexters\Auth\CurrentUser;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
