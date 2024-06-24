@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ isset($title) ? $title . ' - ' . config('app.name') : config('app.name') }}</title>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+
+<body class="font-sans antialiased">
+
+    {{-- The navbar with `sticky` and `full-width` --}}
+    <x-nav sticky full-width>
+
+        <x-slot:brand>
+            {{-- Drawer toggle for "main-drawer" --}}
+            <label for="main-drawer" class="lg:hidden mr-3">
+                <x-icon name="o-bars-3" class="cursor-pointer" />
+            </label>
+
+            {{-- Brand --}}
+            <div>{{ config('app.name') }}</div>
+        </x-slot:brand>
+
+        {{-- Right side actions --}}
+        <x-slot:actions>
+            <x-button label="Profile" icon="o-user-circle" link="#" class="btn-ghost btn-sm" responsive />
+        </x-slot:actions>
+    </x-nav>
+
+    {{-- The main content with `full-width` --}}
+    <x-main with-nav full-width>
+
+        {{-- This is a sidebar that works also as a drawer on small screens --}}
+        {{-- Notice the `main-drawer` reference here --}}
+        <x-slot:sidebar drawer="main-drawer" collapsible class="bg-base-200">
+
+            {{-- User --}}
+            @if ($user = auth()->user())
+                <x-list-item :item="$user" value="name" sub-value="email" no-separator no-hover class="pt-2">
+                    <x-slot:actions>
+                        <x-button icon="o-power" class="btn-circle btn-ghost" tooltip-left="logoff"
+                            no-wire-navigate :link="route('{{ as }}logout')" />
+                    </x-slot:actions>
+                </x-list-item>
+            @endif
+
+            {{-- Activates the menu item when a route matches the `link` property --}}
+            <x-menu activate-by-route>
+                <x-menu-item title="Home" icon="o-home" :link="route('{{ as }}welcome')" />
+            </x-menu>
+        </x-slot:sidebar>
+
+        {{-- The `$slot` goes here --}}
+        <x-slot:content>
+            <div class="container mx-auto">
+                <div class="flex items-center gap-4 mb-8">
+                    @if ($back = request()->get('back'))
+                        <x-button :link="$back" icon="o-arrow-left-circle" class="btn-sm" label="Back" />
+                    @endif
+                    <h3 class="font-bold text-2xl grow">
+                        {{ $title ?? 'Page Title' }}
+                    </h3>
+                </div>
+                {{ $slot }}
+            </div>
+        </x-slot:content>
+    </x-main>
+
+    <x-toast position="toast-bottom toast-center" />
+</body>
+
+</html>

@@ -2,6 +2,9 @@
 
 use Livewire\Volt\Volt;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+
 use App\Http\Middleware\{{ name }}AuthMiddleware;
 use App\Http\Middleware\{{ name }}GuestMiddleware;
 use App\Http\Controllers\{{ name }}VerifyEmailController;
@@ -35,6 +38,15 @@ Route::middleware([{{ name }}AuthMiddleware::class])
 
         });
     
+        Route::get('{{ prefix }}/logout', function () {
+            Auth::guard('{{ guard }}')->logout();
+
+            Session::invalidate();
+            Session::regenerateToken();
+
+            return to_route('{{ as }}login');
+            
+        })->name('{{ as }}logout');
 
         Volt::route('{{ prefix }}/verify-email', 'auth.{{ lowerName }}.verify-email')
             ->name('{{ as }}verification.notice');

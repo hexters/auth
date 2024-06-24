@@ -1,13 +1,14 @@
 <?php
 
-use function Livewire\Volt\{state, layout};
+use function Livewire\Volt\{state, layout, title};
 
 layout('components.layouts.{{ lowerName }}.auth');
+title('Welcome')
 
-//
+// Function here...
 
 ?>
 
 <div>
-    //
+    You're logged in!
 </div>

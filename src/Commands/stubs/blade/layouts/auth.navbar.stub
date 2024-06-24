@@ -1,0 +1,106 @@
+<?php
+
+$menus = [
+    [
+        'title' => 'Home',
+        'route' => route('{{ as }}welcome'),
+        'icon' => 'o-home',
+        'subs' => [],
+    ],
+];
+
+?>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ isset($title) ? $title . ' - ' . config('app.name') : config('app.name') }}</title>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+
+<body class="font-sans antialiased">
+
+    <div class="drawer">
+        <input id="main-drawer" type="checkbox" class="drawer-toggle" />
+        <div class="drawer-content">
+
+            {{-- The navbar with `sticky` and `full-width` --}}
+            <nav class="border-b-2 mb-8">
+                <div class="container flex items-center justify-between px-6 py-4 max-w-screen-2xl mx-auto">
+                    <div class="flex items-center">
+                        {{-- Drawer toggle for "main-drawer" --}}
+                        <label for="main-drawer" class="lg:hidden mr-3">
+                            <x-icon name="o-bars-3" class="cursor-pointer" />
+                        </label>
+
+                        {{-- Brand --}}
+                        <div class="text-lg font-medium">{{ config('app.name') }}</div>
+                    </div>
+
+                    <div class="hidden lg:flex">
+                        <x-menu class="menu-horizontal" activate-by-route>
+                            @foreach ($menus as $menu)
+                                @if (isset($menu['subs']) && count($menu['subs']) > 0)
+                                    <x-menu-sub :title="$menu['title']" :icon="$menu['icon']">
+                                        @foreach ($menu['subs'] as $sub)
+                                            <x-menu-item :title="$sub['title']" :icon="$sub['icon']" :link="$sub['route']" />
+                                        @endforeach
+                                    </x-menu-sub>
+                                @else
+                                    <x-menu-item :title="$menu['title']" :icon="$menu['icon']" :link="$menu['route']" />
+                                @endif
+                            @endforeach
+                        </x-menu>
+                    </div>
+
+                    <x-dropdown>
+                        <x-slot:trigger>
+                            <x-button :label="auth()->user()->name" icon="o-user-circle" class="btn-ghost btn-sm" responsive />
+                        </x-slot:trigger>
+
+                        <x-menu-item icon="o-user-circle" link="#" title="Profile" />
+                        <x-menu-separator />
+                        <x-menu-item icon="o-power" :link="route('{{ as }}logout')" title="Log Out" />
+                    </x-dropdown>
+                </div>
+            </nav>
+
+            <div class="container mx-auto px-4 lg:px-0">
+                <div class="flex items-center gap-4 mb-8">
+                    @if ($back = request()->get('back'))
+                        <x-button :link="$back" icon="o-arrow-left-circle" class="btn-sm" label="Back" />
+                    @endif
+                    <h3 class="font-bold text-2xl grow">
+                        {{ $title ?? 'Page Title' }}
+                    </h3>
+                </div>
+                {{ $slot }}
+            </div>
+
+        </div>
+        <div class="drawer-side">
+            <label for="main-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+            <x-menu class="bg-base-100 text-base-content rounded-none min-h-full w-80 p-4" activate-by-route>
+                @foreach ($menus as $menu)
+                    @if (isset($menu['subs']) && count($menu['subs']) > 0)
+                        <x-menu-sub :title="$menu['title']" :icon="$menu['icon']">
+                            @foreach ($menu['subs'] as $sub)
+                                <x-menu-item :title="$sub['title']" :icon="$sub['icon']" :link="$sub['route']" />
+                            @endforeach
+                        </x-menu-sub>
+                    @else
+                        <x-menu-item :title="$menu['title']" :icon="$menu['icon']" :link="$menu['route']" />
+                    @endif
+                @endforeach
+            </x-menu>
+        </div>
+    </div>
+
+    <x-toast position="toast-bottom toast-center" />
+</body>
+
+</html>

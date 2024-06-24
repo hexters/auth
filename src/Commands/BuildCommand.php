@@ -7,8 +7,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 
-use function Laravel\Prompts\select;
-use function Laravel\Prompts\text;
+use function Laravel\Prompts\{select, text, warning};
+
 
 class BuildCommand extends Command
 {
@@ -19,15 +19,16 @@ class BuildCommand extends Command
      */
     protected $signature = 'make:auth 
                                     { name=default : Name of authentication page } 
-                                    { --guard= : Select existing guard}
-                                    { --prefix= : Prefix for auth page }';
+                                    { --guard= : Select existing guard }
+                                    { --prefix= : Prefix for auth page }
+                                    { --layout= : Orientation auth layout already in sidebar or navbar }';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Create new auth page';
 
     /**
      * Execute the console command.
@@ -43,20 +44,40 @@ class BuildCommand extends Command
         $lowerName = $name->lower();
 
         $guard = $this->option('guard');
+        $guards = array_keys(config('auth.guards'));
         if (empty($guard)) {
-            $guards = array_keys(config('auth.guards'));
             $guard = select('Guard', $guards);
         }
-
+        
         $prefix = $this->option('prefix');
         if (empty($prefix)) {
             $prefix = text('Prefix Page (optional)', $lowerName, $lowerName, false);
         }
 
-        $this->setStub($name, $lowerName, $prefix, $lowerName, $guard);
+        $layout = $this->option('layout');
+        if (empty($layout)) {
+            $layout = select('Layout Auth Page', [
+                'sidebar' => 'With Sidebar',
+                'navbar' => 'With Navbar'
+            ], default: 'With Sidebar', validate: ['required', 'in:sidebar,navbar']);
+        }
+
+        if(! in_array($guard, $guards)) {
+            warning('Incorrect guard format see auth.php config file!');
+            exit();
+        }
+
+        if(! in_array($layout, ['sidebar', 'navbar'])) {
+            warning('The layout format you entered is incorrect! Select sidebar or navbar');
+            exit();
+        }
+
+        $layout = strtolower($layout);
+
+        $this->setStub($name, $lowerName, $prefix, $lowerName, $guard, $layout);
     }
 
-    protected function setStub($name, $lowerName, $prefix, $as, $guard)
+    protected function setStub($name, $lowerName, $prefix, $as, $guard, $layout)
     {
         $replaces = [
             '{{ name }}' => $name,
@@ -126,7 +147,7 @@ class BuildCommand extends Command
         file_put_contents(app_path("Http/Middleware/{$mid}.php"), $verified);
 
         // Layout
-        $authLayout = Str::of(file_get_contents(__DIR__ . '/stubs/blade/layouts/auth.stub'))->replace(array_keys($replaces), array_values($replaces));
+        $authLayout = Str::of(file_get_contents(__DIR__ . "/stubs/blade/layouts/auth.{$layout}.stub"))->replace(array_keys($replaces), array_values($replaces));
         $dir = resource_path("views/components/layouts/{$lowerName}");
         if (!is_dir($dir)) {
             File::makeDirectory($dir);
