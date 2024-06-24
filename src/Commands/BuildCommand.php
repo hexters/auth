@@ -18,7 +18,7 @@ class BuildCommand extends Command
      * @var string
      */
     protected $signature = 'make:auth 
-                                    { name=default : Name of authentication page } 
+                                    { name? : Name of authentication page } 
                                     { --guard= : Select existing guard }
                                     { --prefix= : Prefix for auth page }
                                     { --layout= : Orientation auth layout already in sidebar or navbar }';
@@ -36,7 +36,7 @@ class BuildCommand extends Command
     public function handle()
     {
         $name = $this->argument('name');
-        if ($name == 'default') {
+        if (empty($name)) {
             $name = text('Page Name', 'Name of auth page', '', true);
         }
 
