@@ -13,6 +13,11 @@ Install the package by running:
 php artisan auth:install
 ```
 
+Build assets
+```bash
+npm run build
+```
+
 To create a login page, simply follow this command:
 ```bash
 php artisan make:auth

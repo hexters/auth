@@ -1,7 +1,6 @@
 <?php
 
 use Mary\Traits\Toast;
-use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -23,7 +22,7 @@ state([
 
 rules([
     'name' => ['required', 'string', 'max:255'],
-    'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+    'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . CurrentUser::class('{{ guard }}')],
     'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
 ]);
 
@@ -33,7 +32,7 @@ $signUp = function () {
 
     $validated['password'] = Hash::make($validated['password']);
     
-    $user = User::create($validated);
+    $user = CurrentUser::get('{{ guard }}')->create($validated);
     
     if($user instanceof MustVerifyEmail) {
         $user->notify(new VerifyEmail('{{ as }}verification.verify'));
