@@ -25,24 +25,28 @@ class InstallCommand extends Command
      */
     public function handle()
     {
+        // Get current route 
+        $currentRoute = is_file(base_path('routes/web.php')) ? file_get_contents(base_path('routes/web.php')) : null;
+
         $this->call('livewire:publish', [
             '--config'
         ]);
-        
+
         $this->call('vendor:publish', ['--tag' => 'mary.config']);
         $this->call('volt:install');
         $this->call('mary:install');
         $this->call('view:clear');
         $this->call('livewire:layout', ['--force' => true]);
 
-        $this->reset();
+        $this->reset($currentRoute);
     }
 
-    protected function reset()
+    protected function reset($currentRoute = null)
     {
         // Reset route web
         $stub = file_get_contents(__DIR__ . '/stubs/web.stub');
-        file_put_contents(base_path('routes/web.php'), $stub);
+        $content = $currentRoute ?? $stub;
+        file_put_contents(base_path('routes/web.php'), $content);
 
         // Reset Livewire welcome
         if (file_exists($welcome = app_path('Livewire/Welcome.php'))) {
